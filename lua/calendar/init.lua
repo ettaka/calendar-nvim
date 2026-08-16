@@ -2,10 +2,15 @@ local M = {}
 
 M.HOME_TZ = "+02:00"  -- must match your notifier module
 
+local helpers = require('calendar.helpers')
+
 function M.setup(opts)
   opts = opts or {}
   if opts.HOME_TZ then
     M.HOME_TZ = opts.HOME_TZ
+  end
+  if opts.get_tasks_duration then
+    helpers.get_tasks_duration = opts.get_tasks_duration
   end
 end
 
@@ -19,7 +24,6 @@ local state = {
 local buf, win
 local origin_buf, origin_win
 
-local helpers = require('calendar.helpers')
 local days_in_month = helpers.days_in_month
 local first_weekday = helpers.first_weekday
 local clamp_day = helpers.clamp_day

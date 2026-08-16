@@ -3,6 +3,8 @@ local M = {}
 local helpers = require('calendar.helpers')
 local first_weekday = helpers.first_weekday
 local days_in_month = helpers.days_in_month
+local get_day_effort = helpers.get_day_effort
+local get_effort_indicator = helpers.get_effort_indicator
 
 -- ---------- rendering ----------
 function M.render(state, buf)
@@ -25,18 +27,18 @@ function M.render(state, buf)
   end
 
   for day = 1, total_days do
-    local label = string.format("%2d", day)
+    local hours = get_day_effort(state.year, state.month, day)
+    local indicator = get_effort_indicator(hours)
 
+    local label
     if day == state.day then
       label = "[" .. string.format("%2d", day) .. "]"
+    elseif day == today.day
+      and state.month == today.month
+      and state.year == today.year then
+      label = "•" .. string.format("%2d", day) .. (indicator ~= "" and indicator or " ")
     else
-      if day == today.day
-        and state.month == today.month
-        and state.year == today.year then
-        label = "•" .. string.format("%2d", day) .. " "
-      else
-        label = " " .. string.format("%2d", day) .. " "
-      end
+      label = " " .. string.format("%2d", day) .. (indicator ~= "" and indicator or " ")
     end
 
     table.insert(week, label)
