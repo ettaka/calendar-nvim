@@ -1,13 +1,14 @@
 local M = {}
 
+local date_str = require('calendar.helpers').date_str
 -- ---------- actions ----------
-function M.close()
+function M.close(win)
   if win and vim.api.nvim_win_is_valid(win) then
     vim.api.nvim_win_close(win, true)
   end
 end
 
-local function return_to_origin()
+local function return_to_origin(origin_win, origin_buf)
   if vim.api.nvim_win_is_valid(origin_win) then
     vim.api.nvim_set_current_win(origin_win)
   else
@@ -15,24 +16,24 @@ local function return_to_origin()
   end
 end
 
-function M.paste_timestamp()
-  return_to_origin()
-  local ts = date_str() .. "T" .. os.date("%H:%M") .. M.local_tz_suffix()
+function M.paste_timestamp(state, origin_win, origin_buf, win, local_tz_suffix)
+  return_to_origin(origin_win, origin_buf)
+  local ts = date_str(state) .. "T" .. os.date("%H:%M") .. local_tz_suffix
   vim.api.nvim_put({ ts }, "c", true, true)
-  close()
+  M.close(win)
 end
 
-M.paste_timestamp_now  = function ()
-  local ts = os.date("%Y-%m-%dT%H:%M") .. M.local_tz_suffix()
+M.paste_timestamp_now  = function (win, local_tz_suffix)
+  local ts = os.date("%Y-%m-%dT%H:%M") .. local_tz_suffix
   vim.api.nvim_put({ ts }, "c", true, true)
-  M.close()
+  M.close(win)
 end
 
-function M.open_daily_note()
-  return_to_origin()
-  local path = vim.fn.expand("~/pkb/" .. date_str() .. ".md")
+function M.open_daily_note(state, origin_win, origin_buf, win)
+  return_to_origin(origin_win, origin_buf)
+  local path = vim.fn.expand("~/pkb/" .. date_str(state) .. ".md")
   vim.cmd.edit(path)
-  M.close()
+  M.close(win)
 end
 
 return M

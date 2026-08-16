@@ -1,7 +1,11 @@
 local M = {}
 
+local helpers = require('calendar.helpers')
+local first_weekday = helpers.first_weekday
+local days_in_month = helpers.days_in_month
+
 -- ---------- rendering ----------
-function M.render(state)
+function M.render(state, buf)
   local lines = {}
   table.insert(lines, os.date(" %B %Y", os.time {
     year = state.year,

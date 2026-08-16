@@ -2,10 +2,6 @@ local M = {}
 
 M.HOME_TZ = "+02:00"  -- must match your notifier module
 
-local helpers = require('calendar.helpers')
-helpers.setup(M.HOME_TZ)
-local first_weekday = helpers.first_weekday
-
 function M.setup(HOME_TZ)
   HOME_TZ = HOME_TZ or M.HOME_TZ
 end
@@ -19,17 +15,17 @@ function M.first_weekday(year, month)
   return tonumber(os.date("%w", os.time { year = year, month = month, day = 1 }))
 end
 
-function M.clamp_day()
-  local max_day = days_in_month(state.year, state.month)
+function M.clamp_day(state)
+  local max_day = M.days_in_month(state.year, state.month)
   if state.day > max_day then state.day = max_day end
   if state.day < 1 then state.day = 1 end
 end
 
-function M.date_str()
+function M.date_str(state)
   return string.format("%04d-%02d-%02d", state.year, state.month, state.day)
 end
 
-M.local_tz_suffix = function ()
+M.local_tz_suffix = function (home_tz)
   local z = os.date("%z") -- e.g. "+0200"
 
   local sign, hh, mm = z:match("([%+%-])(%d%d)(%d%d)")
@@ -39,7 +35,7 @@ M.local_tz_suffix = function ()
 
   if formatted == "+00:00" then
     return "Z"
-  elseif formatted == M.HOME_TZ then
+  elseif formatted == home_tz then
     return "H"
   else
     return formatted
