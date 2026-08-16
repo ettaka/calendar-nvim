@@ -2,6 +2,10 @@ local M = {}
 
 M.HOME_TZ = "+02:00"  -- must match your notifier module
 
+local helpers = require('calendar.helpers')
+helpers.setup(M.HOME_TZ)
+local first_weekday = helpers.first_weekday
+
 function M.setup(HOME_TZ)
   HOME_TZ = HOME_TZ or M.HOME_TZ
 end

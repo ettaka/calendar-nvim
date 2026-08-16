@@ -1,7 +1,7 @@
 local M = {}
 
 -- ---------- rendering ----------
-function M.render()
+function M.render(state)
   local lines = {}
   table.insert(lines, os.date(" %B %Y", os.time {
     year = state.year,

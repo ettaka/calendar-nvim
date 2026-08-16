@@ -2,12 +2,12 @@ local M = {}
 
 M.HOME_TZ = "+02:00"  -- must match your notifier module
 
-function M.setup(opts)
-  opts = opts or {}
-  if opts.HOME_TZ then
-    M.HOME_TZ = opts.HOME_TZ
-  end
-end
+-- function M.setup(opts)
+--   opts = opts or {}
+--   if opts.HOME_TZ then
+--     M.HOME_TZ = opts.HOME_TZ
+--   end
+-- end
 
 -- State
 local state = {
@@ -19,19 +19,19 @@ local state = {
 local buf, win
 local origin_buf, origin_win
 
-local helpers = require('helpers')
+local helpers = require('calendar.helpers')
 helpers.setup(M.HOME_TZ)
 local days_in_month = helpers.days_in_month
 local first_weekday = helpers.first_weekday
 local clamp_day = helpers.clamp_day
 local date_str = helpers.date_str
-local render = require('render').render
+local render = require('calendar.render').render
 local local_tz_suffix = helpers.local_tz_suffix
 
-local close = require('actions').close
-local paste_timestamp = require('actions').paste_timestamp
-local paste_timestamp_now = require('actions').paste_timestamp_now
-local open_daily_note = require('actions').open_daily_note
+local close = require('calendar.actions').close
+local paste_timestamp = require('calendar.actions').paste_timestamp
+local paste_timestamp_now = require('calendar.actions').paste_timestamp_now
+local open_daily_note = require('calendar.actions').open_daily_note
 
 -- ---------- open ----------
 
@@ -61,32 +61,32 @@ function M.open()
   local opts = { buffer = buf, silent = true }
 
   -- day focus
-  vim.keymap.set("n", "h", function() state.day = state.day - 1 clamp_day() render() end, opts)
-  vim.keymap.set("n", "l", function() state.day = state.day + 1 clamp_day() render() end, opts)
-  vim.keymap.set("n", "k", function() state.day = state.day - 7 clamp_day() render() end, opts)
-  vim.keymap.set("n", "j", function() state.day = state.day + 7 clamp_day() render() end, opts)
+  vim.keymap.set("n", "h", function() state.day = state.day - 1 clamp_day() render(state) end, opts)
+  vim.keymap.set("n", "l", function() state.day = state.day + 1 clamp_day() render(state) end, opts)
+  vim.keymap.set("n", "k", function() state.day = state.day - 7 clamp_day() render(state) end, opts)
+  vim.keymap.set("n", "j", function() state.day = state.day + 7 clamp_day() render(state) end, opts)
 
   -- view navigation
-  vim.keymap.set("n", "H", function() state.year = state.year - 1 clamp_day() render() end, opts)
-  vim.keymap.set("n", "L", function() state.year = state.year + 1 clamp_day() render() end, opts)
+  vim.keymap.set("n", "H", function() state.year = state.year - 1 clamp_day() render(state) end, opts)
+  vim.keymap.set("n", "L", function() state.year = state.year + 1 clamp_day() render(state) end, opts)
   vim.keymap.set("n", "K", function()
     state.month = state.month - 1
     if state.month < 1 then state.month = 12 state.year = state.year - 1 end
     clamp_day()
-    render()
+    render(state)
   end, opts)
   vim.keymap.set("n", "J", function()
     state.month = state.month + 1
     if state.month > 12 then state.month = 1 state.year = state.year + 1 end
     clamp_day()
-    render()
+    render(state)
   end, opts)
 
   -- today
   vim.keymap.set("n", "t", function()
     local n = os.date("*t")
     state.year, state.month, state.day = n.year, n.month, n.day
-    render()
+    render(state)
   end, opts)
 
   -- actions
@@ -97,9 +97,9 @@ function M.open()
   vim.keymap.set("n", "q", close, opts)
   vim.keymap.set("n", "<Esc>", close, opts)
 
-  render()
+  render(state)
 end
 
-vim.keymap.set({"n", "i", "t"}, "<leader>ts", M.paste_timestamp_now, { desc = "Insert timestamp" })
+vim.keymap.set({"n", "i", "t"}, "<leader>ts", paste_timestamp_now, { desc = "Insert timestamp" })
 
 return M
