@@ -92,8 +92,8 @@ function M.open()
   vim.keymap.set("n", "ts", function() paste_timestamp(state, origin_win, origin_buf, win, helpers.local_tz_suffix(M.HOME_TZ)) end, opts)
 
   -- quit
-  vim.keymap.set("n", "q", close, opts)
-  vim.keymap.set("n", "<Esc>", close, opts)
+  vim.keymap.set("n", "q", function() close(win) end, opts)
+  vim.keymap.set("n", "<Esc>", function() close(win) end, opts)
 
   render(state, buf)
 end

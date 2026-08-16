@@ -1,11 +1,5 @@
 local M = {}
 
-M.HOME_TZ = "+02:00"  -- must match your notifier module
-
-function M.setup(HOME_TZ)
-  HOME_TZ = HOME_TZ or M.HOME_TZ
-end
-
 -- ---------- helpers ----------
 function M.days_in_month(year, month)
   return tonumber(os.date("%d", os.time { year = year, month = month + 1, day = 0 }))
