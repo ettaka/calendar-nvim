@@ -1,14 +1,9 @@
 local M = {}
 
-M.HOME_TZ = "+02:00"  -- must match your notifier module
-
 local helpers = require('calendar.helpers')
 
 function M.setup(opts)
   opts = opts or {}
-  if opts.HOME_TZ then
-    M.HOME_TZ = opts.HOME_TZ
-  end
   if opts.get_tasks_duration then
     helpers.get_tasks_duration = opts.get_tasks_duration
   end
@@ -24,11 +19,8 @@ local state = {
 local buf, win
 local origin_buf, origin_win
 
-local days_in_month = helpers.days_in_month
-local first_weekday = helpers.first_weekday
 local clamp_day = helpers.clamp_day
 local render = require('calendar.render').render
-local local_tz_suffix = helpers.local_tz_suffix
 
 local close = require('calendar.actions').close
 local paste_timestamp = require('calendar.actions').paste_timestamp
@@ -93,7 +85,7 @@ function M.open()
 
   -- actions
   vim.keymap.set("n", "<CR>", function() open_daily_note(state, origin_win, origin_buf, win) end, opts)
-  vim.keymap.set("n", "ts", function() paste_timestamp(state, origin_win, origin_buf, win, helpers.local_tz_suffix(M.HOME_TZ)) end, opts)
+  vim.keymap.set("n", "ts", function() paste_timestamp(state, origin_win, origin_buf, win) end, opts)
 
   -- quit
   vim.keymap.set("n", "q", function() close(win) end, opts)
@@ -101,7 +93,5 @@ function M.open()
 
   render(state, buf)
 end
-
-vim.keymap.set({"n", "i", "t"}, "<leader>ts", function() paste_timestamp_now(win, helpers.local_tz_suffix(M.HOME_TZ)) end, { desc = "Insert timestamp" })
 
 return M

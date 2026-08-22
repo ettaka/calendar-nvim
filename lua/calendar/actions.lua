@@ -16,24 +16,19 @@ local function return_to_origin(origin_win, origin_buf)
   end
 end
 
-function M.paste_timestamp(state, origin_win, origin_buf, win, local_tz_suffix)
-  return_to_origin(origin_win, origin_buf)
-  local ts = date_str(state) .. "T" .. os.date("%H:%M") .. local_tz_suffix
-  vim.api.nvim_put({ ts }, "c", true, true)
-  M.close(win)
-end
-
-M.paste_timestamp_now  = function (win, local_tz_suffix)
-  local ts = os.date("%Y-%m-%dT%H:%M") .. local_tz_suffix
-  vim.api.nvim_put({ ts }, "c", true, true)
-  M.close(win)
-end
-
 function M.open_daily_note(state, origin_win, origin_buf, win)
   return_to_origin(origin_win, origin_buf)
   local path = vim.fn.expand("~/pkb/" .. date_str(state) .. ".md")
   vim.cmd.edit(path)
   M.close(win)
 end
+
+function M.paste_timestamp(state, origin_win, origin_buf, win)
+  return_to_origin(origin_win, origin_buf)
+  local ts = date_str(state) .. "T" .. os.date("%H:%M") .. require('timestamps.parser').local_tz_suffix()
+  vim.api.nvim_put({ ts }, "c", true, true)
+  M.close(win)
+end
+
 
 return M
