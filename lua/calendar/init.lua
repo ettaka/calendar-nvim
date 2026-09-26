@@ -1,11 +1,15 @@
 local M = {}
 
 local helpers = require('calendar.helpers')
+local open_agenda = require('calendar.actions').open_agenda
 
 function M.setup(opts)
   opts = opts or {}
   if opts.get_tasks_duration then
     helpers.get_tasks_duration = opts.get_tasks_duration
+  end
+  if opts.get_day_agenda then
+    helpers.get_day_agenda = opts.get_day_agenda
   end
 end
 
@@ -84,8 +88,10 @@ function M.open()
   end, opts)
 
   -- actions
+  vim.keymap.set("n", "a", function() open_agenda(state) end, opts)
   vim.keymap.set("n", "<CR>", function() open_daily_note(state, origin_win, origin_buf, win) end, opts)
   vim.keymap.set("n", "ts", function() paste_timestamp(state, origin_win, origin_buf, win) end, opts)
+
 
   -- quit
   vim.keymap.set("n", "q", function() close(win) end, opts)

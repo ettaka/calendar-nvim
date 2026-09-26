@@ -34,6 +34,13 @@ function M.get_effort_indicator(hours)
   end
 end
 
+function M.get_day_agenda(year, month, day)
+  if type(M.get_day_agenda) == "function" then
+    return M.get_day_agenda(year, month, day) or {}
+  end
+  return {}
+end
+
 -- Fallback assignment if not set via setup()
 local ok, calc = pcall(require, "pkb.effort_calculation")
 M.get_tasks_duration = ok and calc.get_tasks_duration or nil
